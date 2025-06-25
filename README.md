@@ -18,20 +18,33 @@ Una herramienta avanzada para instalar rápidamente Drupal 11 con integración d
 - Bash shell
 - curl o wget (para la instalación global)
 
-## Instalación global
+## Instalación
 
-Para instalar Quick Drupal Installer Pro globalmente en su sistema, ejecute uno de los siguientes comandos:
+Elija uno de estos métodos:
 
-### Con curl
+1. Usando curl:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh)"
+curl -o- https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh | sh
 ```
 
-### Con wget
+2. Usando wget:
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh)"
+wget -qO- https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh | sh
+```
+
+3. O descargue y ejecute manualmente:
+
+```bash
+# Descargar el instalador
+curl -o install-drupal-pro.sh https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh
+
+# Hacerlo ejecutable
+chmod +x install-drupal-pro.sh
+
+# Ejecutar el instalador
+./install-drupal-pro.sh
 ```
 
 Esto instalará dos comandos en su sistema:

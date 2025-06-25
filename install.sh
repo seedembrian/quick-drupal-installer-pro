@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Colors
 GREEN='\033[0;32m'
@@ -13,49 +13,49 @@ SCRIPT_NAME="quick-drupal-pro"
 REPO_URL="https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install-drupal-pro.sh"
 
 # Mensaje de bienvenida
-echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║                                                        ║${NC}"
-echo -e "${BLUE}║  ${GREEN}Quick Drupal Installer Pro${BLUE}                           ║${NC}"
-echo -e "${BLUE}║  ${YELLOW}Instalador avanzado de Drupal 11 con temas React${BLUE}    ║${NC}"
-echo -e "${BLUE}║                                                        ║${NC}"
-echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
+echo "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
+echo "${BLUE}║                                                        ║${NC}"
+echo "${BLUE}║  ${GREEN}Quick Drupal Installer Pro${BLUE}                           ║${NC}"
+echo "${BLUE}║  ${YELLOW}Instalador avanzado de Drupal 11 con temas React${BLUE}    ║${NC}"
+echo "${BLUE}║                                                        ║${NC}"
+echo "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
 # Check if sudo is available
-if ! command -v sudo &> /dev/null; then
-    echo -e "${RED}Error: El comando 'sudo' es necesario para la instalación${NC}"
+if ! command -v sudo > /dev/null 2>&1; then
+    echo "${RED}Error: El comando 'sudo' es necesario para la instalación${NC}"
     exit 1
 fi
 
 # Request sudo access
-echo -e "${YELLOW}Se requieren permisos de administrador para instalar en $INSTALL_DIR${NC}"
+echo "${YELLOW}Se requieren permisos de administrador para instalar en $INSTALL_DIR${NC}"
 echo -n "Por favor ingrese su contraseña: "
 if ! sudo -v; then
-    echo -e "\n${RED}Error: Acceso de administrador denegado${NC}"
+    echo "\n${RED}Error: Acceso de administrador denegado${NC}"
     exit 1
 fi
 
-echo -e "\n${GREEN}Instalando Quick Drupal Installer Pro...${NC}"
+echo "\n${GREEN}Instalando Quick Drupal Installer Pro...${NC}"
 
 # Download script
 echo "Descargando script..."
 TMP_FILE=$(mktemp)
 
 # Try with curl first, then wget if curl is not available
-if command -v curl &> /dev/null; then
-    curl -o "$TMP_FILE" "$REPO_URL" || {
+if command -v curl > /dev/null 2>&1; then
+    curl -s -o "$TMP_FILE" "$REPO_URL" || {
         rm -f "$TMP_FILE"
-        echo -e "${RED}Error al descargar el script con curl${NC}"
+        echo "${RED}Error al descargar el script con curl${NC}"
         exit 1
     }
-elif command -v wget &> /dev/null; then
-    wget -O "$TMP_FILE" "$REPO_URL" || {
+elif command -v wget > /dev/null 2>&1; then
+    wget -q -O "$TMP_FILE" "$REPO_URL" || {
         rm -f "$TMP_FILE"
-        echo -e "${RED}Error al descargar el script con wget${NC}"
+        echo "${RED}Error al descargar el script con wget${NC}"
         exit 1
     }
 else
-    echo -e "${RED}Error: Se requiere curl o wget para la instalación${NC}"
+    echo "${RED}Error: Se requiere curl o wget para la instalación${NC}"
     exit 1
 fi
 
@@ -63,12 +63,12 @@ fi
 echo "Instalando en $INSTALL_DIR..."
 sudo mv "$TMP_FILE" "$INSTALL_DIR/$SCRIPT_NAME" && \
 sudo chmod +x "$INSTALL_DIR/$SCRIPT_NAME" && \
-echo -e "${GREEN}¡Instalación completada!${NC}" && \
+echo "${GREEN}¡Instalación completada!${NC}" && \
 echo "Ahora puede usar el comando 'quick-drupal-pro' desde cualquier ubicación." && \
 echo "Ejemplo: quick-drupal-pro --help"
 
 # Crear un script de instalación interactivo
-echo -e "\n${YELLOW}Creando script de instalación interactivo...${NC}"
+echo "\n${YELLOW}Creando script de instalación interactivo...${NC}"
 
 INTERACTIVE_SCRIPT="$INSTALL_DIR/quick-drupal-pro-interactive"
 
