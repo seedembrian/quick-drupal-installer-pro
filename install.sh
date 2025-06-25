@@ -1,5 +1,80 @@
 #!/bin/bash
 
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Installation variables
+INSTALL_DIR="/usr/bin"
+SCRIPT_NAME="quick-drupal-pro"
+REPO_URL="https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install-drupal-pro.sh"
+
+# Mensaje de bienvenida
+echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║                                                        ║${NC}"
+echo -e "${BLUE}║  ${GREEN}Quick Drupal Installer Pro${BLUE}                           ║${NC}"
+echo -e "${BLUE}║  ${YELLOW}Instalador avanzado de Drupal 11 con temas React${BLUE}    ║${NC}"
+echo -e "${BLUE}║                                                        ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
+echo ""
+
+# Check if sudo is available
+if ! command -v sudo &> /dev/null; then
+    echo -e "${RED}Error: El comando 'sudo' es necesario para la instalación${NC}"
+    exit 1
+fi
+
+# Request sudo access
+echo -e "${YELLOW}Se requieren permisos de administrador para instalar en $INSTALL_DIR${NC}"
+echo -n "Por favor ingrese su contraseña: "
+if ! sudo -v; then
+    echo -e "\n${RED}Error: Acceso de administrador denegado${NC}"
+    exit 1
+fi
+
+echo -e "\n${GREEN}Instalando Quick Drupal Installer Pro...${NC}"
+
+# Download script
+echo "Descargando script..."
+TMP_FILE=$(mktemp)
+
+# Try with curl first, then wget if curl is not available
+if command -v curl &> /dev/null; then
+    curl -o "$TMP_FILE" "$REPO_URL" || {
+        rm -f "$TMP_FILE"
+        echo -e "${RED}Error al descargar el script con curl${NC}"
+        exit 1
+    }
+elif command -v wget &> /dev/null; then
+    wget -O "$TMP_FILE" "$REPO_URL" || {
+        rm -f "$TMP_FILE"
+        echo -e "${RED}Error al descargar el script con wget${NC}"
+        exit 1
+    }
+else
+    echo -e "${RED}Error: Se requiere curl o wget para la instalación${NC}"
+    exit 1
+fi
+
+# Install script
+echo "Instalando en $INSTALL_DIR..."
+sudo mv "$TMP_FILE" "$INSTALL_DIR/$SCRIPT_NAME" && \
+sudo chmod +x "$INSTALL_DIR/$SCRIPT_NAME" && \
+echo -e "${GREEN}¡Instalación completada!${NC}" && \
+echo "Ahora puede usar el comando 'quick-drupal-pro' desde cualquier ubicación." && \
+echo "Ejemplo: quick-drupal-pro --help"
+
+# Crear un script de instalación interactivo
+echo -e "\n${YELLOW}Creando script de instalación interactivo...${NC}"
+
+INTERACTIVE_SCRIPT="$INSTALL_DIR/quick-drupal-pro-interactive"
+
+cat > "$TMP_FILE" << 'EOL'
+#!/bin/bash
+
 # Colores para mensajes
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -15,12 +90,6 @@ echo -e "${BLUE}║  ${YELLOW}Instalador avanzado de Drupal 11 con temas React${
 echo -e "${BLUE}║                                                        ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
-
-# Verificar permisos de ejecución
-if [ ! -x "$(pwd)/install-drupal-pro.sh" ]; then
-  echo -e "${YELLOW}Configurando permisos de ejecución...${NC}"
-  chmod +x "$(pwd)/install-drupal-pro.sh"
-fi
 
 # Preguntar por el nombre del proyecto
 read -p "Ingrese el nombre del proyecto: " PROJECT_NAME
@@ -76,7 +145,7 @@ if [[ "$ADVANCED_OPTIONS" =~ ^[Ss]$ ]]; then
 fi
 
 # Construir el comando completo
-COMMAND="./install-drupal-pro.sh $FULL_OPTION $REACT_OPTION $GIT_OPTION $ADMIN_OPTIONS $PROJECT_NAME"
+COMMAND="quick-drupal-pro $FULL_OPTION $REACT_OPTION $GIT_OPTION $ADMIN_OPTIONS $PROJECT_NAME"
 
 echo ""
 echo -e "${YELLOW}Comando a ejecutar:${NC}"
@@ -92,3 +161,8 @@ else
   echo -e "${RED}Instalación cancelada.${NC}"
   exit 0
 fi
+EOL
+
+sudo mv "$TMP_FILE" "$INTERACTIVE_SCRIPT" && \
+sudo chmod +x "$INTERACTIVE_SCRIPT" && \
+echo -e "${GREEN}Script interactivo instalado como 'quick-drupal-pro-interactive'${NC}"

@@ -9,17 +9,47 @@ Una herramienta avanzada para instalar rápidamente Drupal 11 con integración d
 - Clonación de repositorios Git de temas React
 - Configuración automática del tema para eliminar estilos de Drupal
 - Soporte para desarrollo con React/Preact
+- Instalación global mediante curl o wget
 
 ## Requisitos
 
 - DDEV instalado
 - Git instalado
 - Bash shell
+- curl o wget (para la instalación global)
+
+## Instalación global
+
+Para instalar Quick Drupal Installer Pro globalmente en su sistema, ejecute uno de los siguientes comandos:
+
+### Con curl
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh)"
+```
+
+### Con wget
+
+```bash
+bash -c "$(wget -qO- https://raw.githubusercontent.com/seedembrian/quick-drupal-installer-pro/master/install.sh)"
+```
+
+Esto instalará dos comandos en su sistema:
+- `quick-drupal-pro`: Para uso directo con opciones de línea de comandos
+- `quick-drupal-pro-interactive`: Para una experiencia guiada con preguntas interactivas
 
 ## Uso
 
+### Modo interactivo
+
 ```bash
-./install-drupal-pro.sh [opciones] nombre-proyecto
+quick-drupal-pro-interactive
+```
+
+### Modo directo
+
+```bash
+quick-drupal-pro [opciones] nombre-proyecto
 ```
 
 ### Opciones
@@ -37,13 +67,13 @@ Una herramienta avanzada para instalar rápidamente Drupal 11 con integración d
 
 ```bash
 # Instalación básica de Drupal con tema React (preguntará la URL)
-./install-drupal-pro.sh -r mi-drupal-pro
+quick-drupal-pro -r mi-drupal-pro
 
 # Instalación completa con tema React desde un repositorio específico
-./install-drupal-pro.sh -f -r -g https://github.com/user/react-theme.git mi-drupal-pro
+quick-drupal-pro -f -r -g https://github.com/user/react-theme.git mi-drupal-pro
 
 # Instalación completa con opciones personalizadas y tema React
-./install-drupal-pro.sh -f -u admin -p secreto -e admin@example.com -n "Mi sitio Pro" -r mi-drupal-pro
+quick-drupal-pro -f -u admin -p secreto -e admin@example.com -n "Mi sitio Pro" -r mi-drupal-pro
 ```
 
 ## Estructura del tema React
@@ -72,3 +102,11 @@ Para trabajar con el tema React después de la instalación:
 3. Ejecuta el servidor de desarrollo: `npm run dev`
 4. Compila para producción: `npm run build`
 5. Limpia la caché de Drupal: `ddev drush cr`
+
+## Desinstalación
+
+Para desinstalar los comandos globales:
+
+```bash
+sudo rm /usr/bin/quick-drupal-pro /usr/bin/quick-drupal-pro-interactive
+```

@@ -1,0 +1,16 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Directorios de prueba
+test/
+temp/
+
+# Archivos de respaldo
+*.bak
+*.swp
+*~
+
+# Archivos de entorno
+.env
+.env.local
