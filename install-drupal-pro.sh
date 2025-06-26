@@ -200,7 +200,16 @@ EOL'
     
     # Copiar el archivo theme_react.theme al tema
     echo "📝 Copiando archivo theme_react.theme..."
-    ddev import-files --source="$(pwd)/theme_react.theme" --target=/var/www/html/web/themes/custom/theme_react/
+    
+    # Usar ddev cp para copiar el archivo al contenedor
+    ddev cp theme_react.theme /var/www/html/web/themes/custom/theme_react/theme_react.theme
+    
+    # Verificar si la copia fue exitosa
+    if ddev exec test -f web/themes/custom/theme_react/theme_react.theme; then
+        echo "✅ Archivo theme_react.theme copiado correctamente."
+    else
+        echo "❌ Error: No se pudo copiar el archivo theme_react.theme."
+    fi
     
     # Crear html.html.twig
     ddev exec mkdir -p web/themes/custom/theme_react/templates
