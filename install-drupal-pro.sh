@@ -117,28 +117,10 @@ if [ "$FULL_INSTALL" = true ]; then
     --yes
 
   echo "✅ Drupal CMS Pro instalado."
-  echo "🌐 URL del sitio: $(ddev describe -j | grep -oP '"https_url"\s*:\s*"\K[^"]+')"
   echo "👤 Usuario: $ADMIN_USER"
   echo "🔑 Contraseña: $ADMIN_PASS"
-
-  # Open in browser (WSL or Linux/macOS)
-  if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-    SITE_URL=$(ddev describe -j | grep -oP '"https_url"\s*:\s*"\K[^"]+')
-    powershell.exe start "$SITE_URL"
-  else
-    ddev launch
-  fi
 else
   echo "📦 Proyecto Drupal Pro creado."
-  echo "🌐 Abriendo el instalador de Drupal Pro en su navegador..."
-  
-  # Open in browser (WSL or Linux/macOS)
-  if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-    SITE_URL=$(ddev describe -j | grep -oP '"https_url"\s*:\s*"\K[^"]+')    
-    powershell.exe start "$SITE_URL"
-  else
-    ddev launch
-  fi
 fi
 
 # Instalar tema React si se solicitó
@@ -198,148 +180,15 @@ global:
     # Los archivos CSS se cargan dinámicamente desde el hook
 EOL'
     
-    # Crear el archivo theme_react.theme directamente
-    echo "📝 Creando archivo theme_react.theme..."
-    
-    # Crear el archivo directamente con contenido mínimo
-    ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.theme << EOL
-<?php
-
-/**
- * @file
- * Functions to support theming in the Theme React theme.
- */
-
-/**
- * Implements hook_page_attachments_alter().
- */
-function theme_react_page_attachments_alter(array & $attachments) {
-  // Obtener la ruta base del tema
-  $theme_path = \Drupal::service("extension.list.theme")->getPath("theme_react");
-  $dist_path = $theme_path . "/react-src/dist/assets";
-  
-  // Buscar archivos CSS y JS en la carpeta dist/assets
-  if (is_dir(DRUPAL_ROOT . "/" . $dist_path)) {
-    $files = scandir(DRUPAL_ROOT . "/" . $dist_path);
-    
-    foreach ($files as $file) {
-      // Ignorar directorios y archivos ocultos
-      if ($file === "." || $file === ".." || is_dir(DRUPAL_ROOT . "/" . $dist_path . "/" . $file)) {
-        continue;
-      }
-      
-      $file_path = "/" . $dist_path . "/" . $file;
-      
-      // Añadir archivos CSS
-      if (preg_match("/\\.css\$/", $file)) {
-        $attachments["#attached"]["html_head"][] = [
-          [
-            "#type" => "html_tag",
-            "#tag" => "link",
-            "#attributes" => [
-              "rel" => "stylesheet",
-              "href" => $file_path,
-            ],
-          ],
-          "theme_react_css_" . md5($file),
-        ];
-      }
-      
-      // Añadir archivos JS
-      if (preg_match("/\\.js\$/", $file)) {
-        $attachments["#attached"]["html_head"][] = [
-          [
-            "#type" => "html_tag",
-            "#tag" => "script",
-            "#attributes" => [
-              "src" => $file_path,
-              "type" => "module",
-              "defer" => TRUE,
-            ],
-          ],
-          "theme_react_js_" . md5($file),
-        ];
-      }
-    }
-  }
-  
-  // Añadir CSS para eliminar todos los estilos de Drupal y dejar solo los del tema React
-  $attachments["#attached"]["html_head"][] = [
-    [
-      "#type" => "html_tag",
-      "#tag" => "style",
-      "#value" => "
-        /* Resetear todos los estilos de Drupal */
-        html, body {
-          all: unset;
-          display: block;
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: 100%;
-          font-family: inherit;
-          line-height: inherit;
-          color: inherit;
-          background: transparent;
-        }
-        
-        /* Eliminar el wrapper dialog-off-canvas-main-canvas */
-        .dialog-off-canvas-main-canvas {
-          all: unset;
-          display: contents;
-        }
-        
-        /* Eliminar todos los estilos de Drupal excepto en el div #app */
-        body > *:not(#app):not(script) {
-          display: none !important;
-        }
-        
-        /* Asegurar que el div #app ocupe todo el espacio disponible */
-        #app {
-          display: block;
-          width: 100%;
-          height: 100%;
-          min-height: 100vh;
-        }
-      ",
-    ],
-    "theme_react_reset_styles",
-  ];
-  
-  // Desactivar bibliotecas CSS de Drupal que no son necesarias
-  if (isset($attachments["#attached"]["library"])) {
-    foreach ($attachments["#attached"]["library"] as $key => $library) {
-      // Mantener solo las bibliotecas esenciales y eliminar el resto
-      if (strpos($library, "core/") === 0 && $library !== "core/drupal.dialog") {
-        continue;
-      }
-      if (strpos($library, "system/") === 0 && $library !== "system/base") {
-        unset($attachments["#attached"]["library"][$key]);
-      }
-      if (strpos($library, "olivero/") === 0) {
-        unset($attachments["#attached"]["library"][$key]);
-      }
-    }
-  }
-}
-EOL'
+    # Crear un archivo theme_react.theme vacío
+    echo "📝 Creando archivo theme_react.theme vacío..."
+    ddev exec bash -c 'touch web/themes/custom/theme_react/theme_react.theme'
     
     # Verificar si la creación fue exitosa
     if ddev exec test -f web/themes/custom/theme_react/theme_react.theme; then
-        echo "✅ Archivo theme_react.theme creado correctamente."
+        echo "✅ Archivo theme_react.theme vacío creado correctamente."
     else
-        echo "❌ Error: No se pudo crear el archivo theme_react.theme."
-        
-        # Intentar crear un archivo .theme vacío como alternativa
-        echo "🔧 Intentando crear un archivo theme_react.theme vacío..."
-        ddev exec bash -c 'touch web/themes/custom/theme_react/theme_react.theme'
-        
-        # Verificar si se creó el archivo vacío
-        if ddev exec test -f web/themes/custom/theme_react/theme_react.theme; then
-            echo "✅ Archivo theme_react.theme vacío creado correctamente."
-        else
-            echo "❌ Error: No se pudo crear ni siquiera un archivo theme_react.theme vacío."
-        fi
+        echo "❌ Error: No se pudo crear el archivo theme_react.theme vacío."
     fi
     
     # Eliminar el archivo theme_react.theme.test si existe
@@ -379,7 +228,7 @@ EOL'
  * Theme override to display a single page.
  */
 #}
-<div id="app"></div>
+<div id="root"></div>
 EOL'
   
   # Activar el tema
@@ -395,3 +244,15 @@ fi
 
 echo "✨ Estado del proyecto Pro:"
 ddev status
+
+# Mostrar URL y abrir en el navegador al final
+echo "🌐 URL del sitio: $(ddev describe -j | grep -oP '"https_url"\s*:\s*"\K[^"]+')"  
+echo "🌐 Abriendo el sitio en su navegador..."
+
+# Open in browser (WSL or Linux/macOS)
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+  SITE_URL=$(ddev describe -j | grep -oP '"https_url"\s*:\s*"\K[^"]+')    
+  powershell.exe start "$SITE_URL"
+else
+  ddev launch
+fi
