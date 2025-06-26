@@ -212,7 +212,7 @@ EOL'
  */
 function theme_react_page_attachments_alter(array &$attachments) {
   // Obtener la ruta base del tema
-  $theme_path = \\Drupal::service("extension.list.theme")->getPath("theme_react");
+  $theme_path = \Drupal::service("extension.list.theme")->getPath("theme_react");
   $dist_path = $theme_path . "/react-src/dist/assets";
   
   // Buscar archivos CSS y JS en la carpeta dist/assets
