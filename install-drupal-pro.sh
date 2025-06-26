@@ -155,6 +155,9 @@ if [ "$INSTALL_REACT" = true ]; then
     read -r REACT_REPO
   fi
   
+  # Crear archivos básicos para el tema React (siempre, independientemente del repositorio)
+  echo "📝 Creando archivos básicos para el tema React Pro..."
+  
   # Clonar el repositorio si se proporcionó una URL
   if [ -n "$REACT_REPO" ]; then
     echo "📦 Clonando repositorio React desde $REACT_REPO..."
@@ -169,9 +172,7 @@ if [ "$INSTALL_REACT" = true ]; then
       echo "🔨 Construyendo el proyecto React..."
       ddev exec -d /var/www/html/web/themes/custom/theme_react/react-src npm run build
     fi
-  else
-    # Crear archivos básicos para el tema React
-    echo "📝 Creando archivos básicos para el tema React Pro..."
+  fi
     
     # Crear theme_react.info.yml
     ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.info.yml << EOL
@@ -356,7 +357,6 @@ EOL'
 #}
 <div id="app"></div>
 EOL'
-  fi
   
   # Activar el tema
   echo "🔌 Activando el tema React Pro..."
