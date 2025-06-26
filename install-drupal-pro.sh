@@ -342,16 +342,8 @@ EOL'
         fi
     fi
     
-    # Crear un archivo theme_react.theme.test vacío para pruebas
-    echo "🚧 Creando archivo theme_react.theme.test vacío para pruebas..."
-    ddev exec bash -c 'touch web/themes/custom/theme_react/theme_react.theme.test'
-    
-    # Verificar si se creó el archivo de prueba
-    if ddev exec test -f web/themes/custom/theme_react/theme_react.theme.test; then
-        echo "✅ Archivo theme_react.theme.test creado correctamente."
-    else
-        echo "❌ Error: No se pudo crear el archivo theme_react.theme.test."
-    fi
+    # Eliminar el archivo theme_react.theme.test si existe
+    ddev exec bash -c 'rm -f web/themes/custom/theme_react/theme_react.theme.test 2>/dev/null || true'
     
     # Crear html.html.twig
     ddev exec mkdir -p web/themes/custom/theme_react/templates
