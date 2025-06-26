@@ -199,7 +199,7 @@ global:
 EOL'
     
     # Crear theme_react.theme
-    ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.theme << EOL
+    ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.theme.php << EOL
 <?php
 
 /**
