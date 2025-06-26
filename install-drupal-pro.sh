@@ -213,58 +213,58 @@ EOL'
 /**
  * Implements hook_page_attachments_alter().
  */
-function theme_react_page_attachments_alter(array &\$attachments) {
+function theme_react_page_attachments_alter(array & $attachments) {
   // Obtener la ruta base del tema
-  \$theme_path = \\Drupal::service("extension.list.theme")->getPath("theme_react");
-  \$dist_path = \$theme_path . "/react-src/dist/assets";
+  $theme_path = \Drupal::service("extension.list.theme")->getPath("theme_react");
+  $dist_path = $theme_path . "/react-src/dist/assets";
   
   // Buscar archivos CSS y JS en la carpeta dist/assets
-  if (is_dir(DRUPAL_ROOT . "/" . \$dist_path)) {
-    \$files = scandir(DRUPAL_ROOT . "/" . \$dist_path);
+  if (is_dir(DRUPAL_ROOT . "/" . $dist_path)) {
+    $files = scandir(DRUPAL_ROOT . "/" . $dist_path);
     
-    foreach (\$files as \$file) {
+    foreach ($files as $file) {
       // Ignorar directorios y archivos ocultos
-      if (\$file === "." || \$file === ".." || is_dir(DRUPAL_ROOT . "/" . \$dist_path . "/" . \$file)) {
+      if ($file === "." || $file === ".." || is_dir(DRUPAL_ROOT . "/" . $dist_path . "/" . $file)) {
         continue;
       }
       
-      \$file_path = "/" . \$dist_path . "/" . \$file;
+      $file_path = "/" . $dist_path . "/" . $file;
       
       // Añadir archivos CSS
-      if (preg_match("/\\.css\$/", \$file)) {
-        \$attachments["#attached"]["html_head"][] = [
+      if (preg_match("/\\.css\$/", $file)) {
+        $attachments["#attached"]["html_head"][] = [
           [
             "#type" => "html_tag",
             "#tag" => "link",
             "#attributes" => [
               "rel" => "stylesheet",
-              "href" => \$file_path,
+              "href" => $file_path,
             ],
           ],
-          "theme_react_css_" . md5(\$file),
+          "theme_react_css_" . md5($file),
         ];
       }
       
       // Añadir archivos JS
-      if (preg_match("/\\.js\$/", \$file)) {
-        \$attachments["#attached"]["html_head"][] = [
+      if (preg_match("/\\.js\$/", $file)) {
+        $attachments["#attached"]["html_head"][] = [
           [
             "#type" => "html_tag",
             "#tag" => "script",
             "#attributes" => [
-              "src" => \$file_path,
+              "src" => $file_path,
               "type" => "module",
               "defer" => TRUE,
             ],
           ],
-          "theme_react_js_" . md5(\$file),
+          "theme_react_js_" . md5($file),
         ];
       }
     }
   }
   
   // Añadir CSS para eliminar todos los estilos de Drupal y dejar solo los del tema React
-  \$attachments["#attached"]["html_head"][] = [
+  $attachments["#attached"]["html_head"][] = [
     [
       "#type" => "html_tag",
       "#tag" => "style",
@@ -307,17 +307,17 @@ function theme_react_page_attachments_alter(array &\$attachments) {
   ];
   
   // Desactivar bibliotecas CSS de Drupal que no son necesarias
-  if (isset(\$attachments["#attached"]["library"])) {
-    foreach (\$attachments["#attached"]["library"] as \$key => \$library) {
+  if (isset($attachments["#attached"]["library"])) {
+    foreach ($attachments["#attached"]["library"] as $key => $library) {
       // Mantener solo las bibliotecas esenciales y eliminar el resto
-      if (strpos(\$library, "core/") === 0 && \$library !== "core/drupal.dialog") {
+      if (strpos($library, "core/") === 0 && $library !== "core/drupal.dialog") {
         continue;
       }
-      if (strpos(\$library, "system/") === 0 && \$library !== "system/base") {
-        unset(\$attachments["#attached"]["library"][\$key]);
+      if (strpos($library, "system/") === 0 && $library !== "system/base") {
+        unset($attachments["#attached"]["library"][$key]);
       }
-      if (strpos(\$library, "olivero/") === 0) {
-        unset(\$attachments["#attached"]["library"][\$key]);
+      if (strpos($library, "olivero/") === 0) {
+        unset($attachments["#attached"]["library"][$key]);
       }
     }
   }
