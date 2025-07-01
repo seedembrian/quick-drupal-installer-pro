@@ -98,12 +98,9 @@ if [ -z "$PROJECT_NAME" ]; then
   exit 1
 fi
 
-# Preguntar por instalación completa
-read -p "¿Desea realizar una instalación completa? (s/n): " FULL_INSTALL
-FULL_OPTION=""
-if [[ "$FULL_INSTALL" =~ ^[Ss]$ ]]; then
-  FULL_OPTION="-f"
-fi
+# La instalación siempre será completa
+FULL_OPTION="-f"
+echo -e "${GREEN}Se realizará una instalación completa automáticamente${NC}"
 
 # Preguntar por tema React
 read -p "¿Desea instalar un tema React? (s/n): " INSTALL_REACT

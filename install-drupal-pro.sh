@@ -266,9 +266,9 @@ EOFTHEME'
     
     # Verificar si la creación fue exitosa
     if ddev exec test -f web/themes/custom/theme_react/theme_react.theme; then
-        echo "✅ Archivo theme_react.theme vacío creado correctamente."
+        echo "✅ Archivo theme_react.theme creado correctamente."
     else
-        echo "❌ Error: No se pudo crear el archivo theme_react.theme vacío."
+        echo "❌ Error: No se pudo crear el archivo theme_react.theme."
     fi
     
     # Eliminar el archivo theme_react.theme.test si existe
