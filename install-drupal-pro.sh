@@ -180,9 +180,13 @@ global:
     # Los archivos CSS se cargan dinámicamente desde el hook
 EOL'
     
-    # Crear archivo theme_react.theme con el código necesario
-    echo "📝 Creando archivo theme_react.theme con el código necesario..."
-    ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.theme << "EOL"
+    # Crear un archivo theme_react.theme vacío
+    echo "📝 Creando archivo theme_react.theme vacío..."
+    ddev exec bash -c 'touch web/themes/custom/theme_react/theme_react.theme'
+    
+    # Añadir el código PHP al archivo theme_react.theme
+    echo "📝 Añadiendo código al archivo theme_react.theme..."
+    ddev exec bash -c 'cat > web/themes/custom/theme_react/theme_react.theme << "EOFTHEME"
 <?php
 
 /**
@@ -193,58 +197,58 @@ EOL'
 /**
  * Implements hook_page_attachments_alter().
  */
-function theme_react_page_attachments_alter(array &$attachments) {
+function theme_react_page_attachments_alter(array &\$attachments) {
   // Obtener la ruta base del tema
-  $theme_path = \Drupal::service("extension.list.theme")->getPath("theme_react");
-  $dist_path = $theme_path . "/react-src/dist/assets";
+  \$theme_path = \Drupal::service("extension.list.theme")->getPath("theme_react");
+  \$dist_path = \$theme_path . "/react-src/dist/assets";
   
   // Buscar archivos CSS y JS en la carpeta dist/assets
-  if (is_dir(DRUPAL_ROOT . "/" . $dist_path)) {
-    $files = scandir(DRUPAL_ROOT . "/" . $dist_path);
+  if (is_dir(DRUPAL_ROOT . "/" . \$dist_path)) {
+    \$files = scandir(DRUPAL_ROOT . "/" . \$dist_path);
     
-    foreach ($files as $file) {
+    foreach (\$files as \$file) {
       // Ignorar directorios y archivos ocultos
-      if ($file === "." || $file === ".." || is_dir(DRUPAL_ROOT . "/" . $dist_path . "/" . $file)) {
+      if (\$file === "." || \$file === ".." || is_dir(DRUPAL_ROOT . "/" . \$dist_path . "/" . \$file)) {
         continue;
       }
       
-      $file_path = "/" . $dist_path . "/" . $file;
+      \$file_path = "/" . \$dist_path . "/" . \$file;
       
       // Añadir archivos CSS
-      if (preg_match("/\.css$/", $file)) {
-        $attachments["#attached"]["html_head"][] = [
+      if (preg_match("/\\.css\$/", \$file)) {
+        \$attachments["#attached"]["html_head"][] = [
           [
             "#type" => "html_tag",
             "#tag" => "link",
             "#attributes" => [
               "rel" => "stylesheet",
-              "href" => $file_path,
+              "href" => \$file_path,
             ],
           ],
-          "theme_react_css_" . md5($file),
+          "theme_react_css_" . md5(\$file),
         ];
       }
       
       // Añadir archivos JS
-      if (preg_match("/\.js$/", $file)) {
-        $attachments["#attached"]["html_head"][] = [
+      if (preg_match("/\\.js\$/", \$file)) {
+        \$attachments["#attached"]["html_head"][] = [
           [
             "#type" => "html_tag",
             "#tag" => "script",
             "#attributes" => [
-              "src" => $file_path,
+              "src" => \$file_path,
               "type" => "module",
               "defer" => TRUE,
             ],
           ],
-          "theme_react_js_" . md5($file),
+          "theme_react_js_" . md5(\$file),
         ];
       }
     }
   }
   
   // Añadir CSS para manejar el div dialog-off-canvas-main-canvas
-  $attachments["#attached"]["html_head"][] = [
+  \$attachments["#attached"]["html_head"][] = [
     [
       "#type" => "html_tag",
       "#tag" => "style",
@@ -258,7 +262,7 @@ function theme_react_page_attachments_alter(array &$attachments) {
     "theme_react_dialog_fix",
   ];
 }
-EOL'
+EOFTHEME'
     
     # Verificar si la creación fue exitosa
     if ddev exec test -f web/themes/custom/theme_react/theme_react.theme; then
