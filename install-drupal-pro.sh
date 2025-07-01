@@ -116,6 +116,10 @@ if [ "$FULL_INSTALL" = true ]; then
     --site-name="$SITE_NAME" \
     --yes
 
+  # Corregir el error de permiso 'access toolbar' para el rol 'content editor'
+  echo "🔧 Corrigiendo permisos para el rol 'content editor'..."
+  ddev drush role:remove-permission content_editor "access toolbar" 2>/dev/null || true
+
   echo "✅ Drupal CMS Pro instalado."
   echo "👤 Usuario: $ADMIN_USER"
   echo "🔑 Contraseña: $ADMIN_PASS"
